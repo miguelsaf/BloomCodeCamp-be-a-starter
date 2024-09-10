@@ -8,4 +8,5 @@ public class Authority {
 
     @ManyToOne
     private User user;
+
 }
