@@ -5,6 +5,8 @@ import com.hcc.services.UserDetailServiceImpl;
 import com.hcc.utils.CustomPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,8 +14,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.http.HttpServletResponse;
+
 
 @EnableWebSecurity
 public class SecurityConfig  extends WebSecurityConfigurerAdapter {
@@ -40,7 +45,8 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().cors().disable(); // do not dissable this lot here just for now!!
+        http.csrf().disable();
+        http.cors().and(); // do not dissable this lot here just for now!!
 
         http = http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and();
 
@@ -50,6 +56,7 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers("/api/auth/**").permitAll()
+                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .anyRequest().authenticated();
         http.addFilterBefore(jwtFilt, UsernamePasswordAuthenticationFilter.class);
     }
